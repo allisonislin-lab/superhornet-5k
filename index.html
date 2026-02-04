@@ -152,7 +152,7 @@
   </footer>
 
 <script>
-  const ENDPOINT = https://script.google.com/macros/s/AKfycbxbnnXnHL8swoSYXHC_SsZGiqmo-U57wDVgbsr-vAZeAOyQcXE6ev4G9Ige-aVIllNB/exec; // <-- paste your Apps Script web app URL
+  const ENDPOINT = https://script.google.com/macros/s/AKfycbyUhjqW5Ut-DikF8Qd0ZVb2MKdDvUv4IZeo6O85kcoClNnEORrSaA82jUSQxlGOUeEg/exec; // <-- paste your Apps Script web app URL
 
   const form = document.getElementById("regForm");
   const msg = document.getElementById("msg");
@@ -173,9 +173,13 @@
         body: JSON.stringify(data),
       });
       const out = await res.json();
-      if (out.ok) {
-        msg.innerHTML = `<div class="ok">✅ Registration received.</div>`;
-        form.reset();
+    if (out.ok) {
+  msg.innerHTML = `<div class="ok">
+    ✅ Registration submitted successfully.<br>
+    Payment pending verification via Venmo.
+  </div>`;
+  form.reset();
+
       } else {
         msg.innerHTML = `<div class="err">❌ Error: ${out.error || "unknown"}</div>`;
       }
