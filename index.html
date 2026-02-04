@@ -101,7 +101,8 @@
       <h2 style="margin:0 0 8px;">Register</h2>
       <div class="small">All fields marked * are required.</div>
 
-      <form id="regForm">
+    <form id="regForm" action="javascript:void(0);">
+
 
         <div class="grid">
           <div>
@@ -228,12 +229,26 @@
         });
         const out = await res.json();
 
-        if (out.ok) {
-          msg.innerHTML = `<div class="ok">
-            ✅ Registration submitted successfully.<br>
-            Payment pending verification via Venmo.
-          </div>`;
-          form.reset();
+        if (out.ok)  {
+  // show message FIRST
+  msg.innerHTML = `<div class="ok" style="padding:10px 0;">
+    ✅ Registration submitted successfully.<br>
+    Payment pending verification via Venmo.
+  </div>`;
+
+  // make sure user sees it (especially on mobile)
+  msg.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  // reset AFTER message is visible
+  setTimeout(() => form.reset(), 150);
+
+} else {
+  msg.innerHTML = `<div class="err" style="padding:10px 0;">
+    ❌ ${out.error || "Submission error"}
+  </div>`;
+  msg.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
         } else {
           msg.innerHTML = `<div class="err">❌ ${out.error || "Submission error"}</div>`;
         }
