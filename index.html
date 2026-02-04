@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Superhornet 5K Trail Race — Registration</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0b1220;color:#eaf0ff}
+    header{padding:28px 18px;background:linear-gradient(135deg,#152a55,#0b1220)}
+    .wrap{max-width:900px;margin:0 auto}
+    h1{margin:0 0 6px;font-size:28px}
+    .sub{opacity:.9}
+    main{padding:18px}
+    .card{background:#111b33;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px;margin:12px 0}
+    label{display:block;font-size:13px;margin:10px 0 6px;opacity:.95}
+    input,select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:#0b1220;color:#eaf0ff}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media (max-width:720px){.grid{grid-template-columns:1fr}}
+    button{padding:12px 14px;border-radius:12px;border:none;background:#ff3b30;color:white;font-weight:700;cursor:pointer;width:100%}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .small{font-size:12px;opacity:.85}
+    .ok{color:#78ff9e}
+    .err{color:#ff8a8a}
+    .row{display:flex;gap:10px;align-items:center}
+    .row input[type="checkbox"]{width:auto}
+    footer{padding:22px 18px;opacity:.75}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Superhornet 5K Trail Race</h1>
+      <div class="sub">Participant registration (free). Entries are saved to our roster.</div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="card">
+      <h2 style="margin:0 0 8px;">Register</h2>
+      <div class="small">Fields marked * are required.</div>
+
+      <form id="regForm">
+        <div class="grid">
+          <div>
+            <label>First name *</label>
+            <input name="firstName" required />
+          </div>
+          <div>
+            <label>Last name *</label>
+            <input name="lastName" required />
+          </div>
+          <div>
+            <label>Email *</label>
+            <input name="email" type="email" required />
+          </div>
+          <div>
+            <label>Phone</label>
+            <input name="phone" />
+          </div>
+          <div>
+            <label>Date of birth</label>
+            <input name="dob" type="date" />
+          </div>
+          <div>
+            <label>Gender</label>
+            <select name="gender">
+              <option value="">—</option>
+              <option>Female</option>
+              <option>Male</option>
+              <option>Non-binary</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Address</label>
+            <input name="address" />
+          </div>
+          <div>
+            <label>City</label>
+            <input name="city" />
+          </div>
+          <div>
+            <label>State</label>
+            <input name="state" />
+          </div>
+          <div>
+            <label>Zip</label>
+            <input name="zip" />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label>Emergency contact name *</label>
+            <input name="emergencyName" required />
+          </div>
+          <div>
+            <label>Emergency contact phone *</label>
+            <input name="emergencyPhone" required />
+          </div>
+          <div>
+            <label>Shirt size</label>
+            <select name="shirtSize">
+              <option value="">—</option>
+              <option>YS</option><option>YM</option><option>YL</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
+            </select>
+          </div>
+          <div>
+            <label>Race category</label>
+            <select name="raceCategory">
+              <option value="">—</option>
+              <option>5K</option>
+              <option>5K (Walk)</option>
+              <option>Youth</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="card" style="background:#0b1220">
+          <strong>Waiver *</strong>
+          <p class="small">
+            I understand trail running involves risks. I assume all risks of participation and
+            release the organizers, sponsors, volunteers, and venue from liability except where prohibited by law.
+          </p>
+          <div class="row">
+            <input id="waiver" type="checkbox" required />
+            <label for="waiver" style="margin:0">I accept the waiver *</label>
+          </div>
+        </div>
+
+        <button id="submitBtn" type="submit">Submit registration</button>
+        <div id="msg" style="margin-top:10px;"></div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <div class="small">© Superhornet 5K Trail Race</div>
+  </footer>
+
+<script>
+  const ENDPOINT = https://script.google.com/macros/s/AKfycbzelNAoieU2CACvYJKWAxmPXXjAsLir8aNoKzqyS6fM40yZ5qA-oTKbyveK7J-FPsNG/exec; // <-- paste your Apps Script web app URL
+
+  const form = document.getElementById("regForm");
+  const msg = document.getElementById("msg");
+  const btn = document.getElementById("submitBtn");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = "";
+    btn.disabled = true;
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.waiverAccepted = document.getElementById("waiver").checked;
+
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(data),
+      });
+      const out = await res.json();
+      if (out.ok) {
+        msg.innerHTML = `<div class="ok">✅ Registration received.</div>`;
+        form.reset();
+      } else {
+        msg.innerHTML = `<div class="err">❌ Error: ${out.error || "unknown"}</div>`;
+      }
+    } catch (err) {
+      msg.innerHTML = `<div class="err">❌ Network error: ${String(err)}</div>`;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
